@@ -1,10 +1,20 @@
 package naver.naver_api.controller;
 
+import lombok.Data;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import naver.naver_api.repository.MemberRepository;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +28,27 @@ import java.util.Map;
 @Controller
 @Slf4j
 public class LoginController {
+    String LOGIN_MEMBER ="loginMember";
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @GetMapping("")
+    public String home(HttpServletRequest request, Model model){
+        HttpSession session = request.getSession(false);//true: 세션이 없으면 생성, false: 세션이 없으면 null
+        if(session == null){
+            return "index";
+        }
+
+        NaverMember member = (NaverMember)session.getAttribute(LOGIN_MEMBER);
+
+        if(member == null){
+            return "index";
+        }
+        model.addAttribute("member",member);
+        return "userInfo";
+    }
+
 
     @RequestMapping("/naver/login")
     public String naverLoginForm() {
@@ -26,17 +57,49 @@ public class LoginController {
     }
 
     @GetMapping("/naver/callback")
-    @ResponseBody
     public String naverLoginV1(){
         log.info("naverLoginV1");
-
         return "loginCallback";
     }
 
-    @GetMapping("/naver/getInfo")
-    @ResponseBody
-    public String getInfo(HttpServletResponse response){
-        String token = "AAAAOwvQPGfZ_e-3JNWhrpuporBMbrH4KVh5RbqnmRR1lB1zgT-OqRyFCzsix4JBafDl6DLZm42RyDiruzFqO1V7qcU"; // 네이버 로그인 접근 토큰;
+    @PostMapping ("/naver/callback")
+    public String setToken(@ModelAttribute NaverMember member, HttpServletRequest request) throws ParseException {
+        log.info("setToken");
+        log.info("member={}",member);
+
+        //없어온 토큰으로 한번더 인증
+        String info = getInfo(member);
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(info);
+        log.info("jsonObject={}",jsonObject);
+        String memberCode = String.valueOf(jsonObject.get("resultcode"));
+        if(memberCode.equals("00")){
+            HttpSession session = request.getSession();
+            session.setAttribute(LOGIN_MEMBER,member);
+        }
+        return "redirect:/";
+    }
+
+    @Data
+    static class NaverMember{
+        private String nickName;
+        private String token;
+        private String email;
+
+        @Override
+        public String toString() {
+            return "NaverMember{" +
+                    "nickName='" + nickName + '\'' +
+                    ", token='" + token + '\'' +
+                    ", email='" + email + '\'' +
+                    '}';
+        }
+    }
+
+//    @GetMapping("/naver/getInfo")
+//    @ResponseBody
+    public String getInfo(NaverMember member){
+        String token = member.getToken();
         String header = "Bearer " + token; // Bearer 다음에 공백 추가
 
 
