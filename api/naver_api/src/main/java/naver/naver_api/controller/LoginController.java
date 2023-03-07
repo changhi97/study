@@ -1,16 +1,18 @@
 package naver.naver_api.controller;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import naver.naver_api.controller.dto.NaverMember;
 import naver.naver_api.repository.MemberRepository;
 import naver.naver_api.session.SessionConst;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -29,11 +31,14 @@ import java.util.Map;
 @Slf4j
 public class LoginController {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+
+    public LoginController(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     @GetMapping("/")
-    public String home(HttpServletRequest request, Model model){
+    public String home(HttpServletRequest request, Model model) {
         return "index";
     }
 
@@ -44,50 +49,33 @@ public class LoginController {
     }
 
     @GetMapping("/naver/callback")
-    public String naverLoginV1(){
+    public String naverLoginV1() {
         log.info("naverLoginV1");
         return "loginCallback";
     }
 
-    @PostMapping ("/naver/callback")
+    @PostMapping("/naver/callback")
     public String setToken(@ModelAttribute NaverMember member, HttpServletRequest request) throws ParseException {
         log.info("setToken");
-//        log.info("redirect = {}",redirectURL);
-//        log.info("member={}",member);
 
         //가져온 토큰으로 한번더 인증
         String info = getInfo(member);
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(info);
-        log.info("jsonObject={}",jsonObject);
+        log.info("jsonObject={}", jsonObject);
         String memberCode = String.valueOf(jsonObject.get("resultcode"));
 
         //토큰이 유효하다면 로그인 세션 생성
-        if(memberCode.equals("00")){
+        if (memberCode.equals("00")) {
             HttpSession session = request.getSession();
-            session.setAttribute(SessionConst.LOGIN_MEMBER,member);
+            session.setAttribute(SessionConst.LOGIN_MEMBER, member);
         }
         return "redirect:/";
     }
 
-    @Data
-    static class NaverMember{
-        private String nickName;
-        private String token;
-        private String email;
-
-        @Override
-        public String toString() {
-            return "NaverMember{" +
-                    "nickName='" + nickName + '\'' +
-                    ", token='" + token + '\'' +
-                    ", email='" + email + '\'' +
-                    '}';
-        }
-    }
 
     @GetMapping("/userInfo")
-    public String userInfo(HttpServletRequest request,Model model){
+    public String userInfo(HttpServletRequest request, Model model) {
 //        HttpSession session = request.getSession(false);//true: 세션이 없으면 생성, false: 세션이 없으면 null
 //        if(session == null){
 //            return "index";
@@ -103,8 +91,8 @@ public class LoginController {
         //컨트롤러마다 세션을 체크하는 로직을 짜는것보다 필터, 인터럽트 사용
 
         HttpSession session = request.getSession();
-        NaverMember finMember = (NaverMember)session.getAttribute(SessionConst.LOGIN_MEMBER);
-        model.addAttribute("member",finMember);
+        NaverMember finMember = (NaverMember) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        model.addAttribute("member", finMember);
         return "userInfo";
     }
 
@@ -115,28 +103,26 @@ public class LoginController {
         return "date";
     }
 
-    public String getInfo(NaverMember member){
+    public String getInfo(NaverMember member) {
         String token = member.getToken();
         String header = "Bearer " + token; // Bearer 다음에 공백 추가
 
-
         String apiURL = "https://openapi.naver.com/v1/nid/me";
-
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", header);
-        String responseBody = get(apiURL,requestHeaders);
+        String responseBody = get(apiURL, requestHeaders);
 
 
         System.out.println(responseBody);
         return responseBody;
     }
 
-    private static String get(String apiUrl, Map<String, String> requestHeaders){
+    private static String get(String apiUrl, Map<String, String> requestHeaders) {
         HttpURLConnection con = connect(apiUrl);
         try {
             con.setRequestMethod("GET");
-            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+            for (Map.Entry<String, String> header : requestHeaders.entrySet()) {
                 con.setRequestProperty(header.getKey(), header.getValue());
             }
 
@@ -154,10 +140,10 @@ public class LoginController {
         }
     }
 
-    private static HttpURLConnection connect(String apiUrl){
+    private static HttpURLConnection connect(String apiUrl) {
         try {
             URL url = new URL(apiUrl);
-            return (HttpURLConnection)url.openConnection();
+            return (HttpURLConnection) url.openConnection();
         } catch (MalformedURLException e) {
             throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);
         } catch (IOException e) {
@@ -166,7 +152,7 @@ public class LoginController {
     }
 
 
-    private static String readBody(InputStream body){
+    private static String readBody(InputStream body) {
         InputStreamReader streamReader = new InputStreamReader(body);
 
 

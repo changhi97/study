@@ -1,4 +1,4 @@
-package naver.naver_api.web;
+package naver.naver_api.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
 
