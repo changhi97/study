@@ -13,15 +13,18 @@ public class Member {
     @Id @GeneratedValue
     private Long id;
 
-    private String name;
+    private String userName;
     private String email;
+
+//    @OneToMany(mappedBy = "member")
+//    private List<Board> boards = new ArrayList<>();
 
     protected Member(){
 
     }
 
-    public Member(String name, String email) {
-        this.name = name;
+    public Member(String userName, String email) {
+        this.userName = userName;
         this.email = email;
     }
 
@@ -29,7 +32,7 @@ public class Member {
     public String toString() {
         return "Member{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }

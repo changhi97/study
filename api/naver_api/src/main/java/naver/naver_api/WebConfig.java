@@ -17,10 +17,10 @@ public class WebConfig implements WebMvcConfigurer {    //implements WebMvcConfi
     //interceptor   -   필터와 다르게 url처리가 간단(** : all , *.png : 특정 파일)
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor())
-                .order(1)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error");
+//        registry.addInterceptor(new LogInterceptor())
+//                .order(1)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/css/**", "/*.ico", "/error");
 
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)

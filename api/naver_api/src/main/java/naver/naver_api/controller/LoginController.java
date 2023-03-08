@@ -1,7 +1,9 @@
 package naver.naver_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import naver.naver_api.controller.dto.NaverMember;
+import naver.naver_api.controller.dto.OauthMember;
+import naver.naver_api.controller.dto.OauthMember;
+import naver.naver_api.domain.Member;
 import naver.naver_api.repository.MemberRepository;
 import naver.naver_api.session.SessionConst;
 import org.json.simple.JSONObject;
@@ -55,20 +57,22 @@ public class LoginController {
     }
 
     @PostMapping("/naver/callback")
-    public String setToken(@ModelAttribute NaverMember member, HttpServletRequest request) throws ParseException {
+    public String setToken(@ModelAttribute OauthMember oauthMember, HttpServletRequest request) throws ParseException {
         log.info("setToken");
-
+//        log.info("oauthMember={}",oauthMember);
         //가져온 토큰으로 한번더 인증
-        String info = getInfo(member);
+        String info = getInfo(oauthMember);
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(info);
-        log.info("jsonObject={}", jsonObject);
+//        log.info("jsonObject={}", jsonObject);
         String memberCode = String.valueOf(jsonObject.get("resultcode"));
 
         //토큰이 유효하다면 로그인 세션 생성
         if (memberCode.equals("00")) {
             HttpSession session = request.getSession();
-            session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+            Member loginMember = new Member(oauthMember.getUserName(), oauthMember.getEmail());
+            log.info("loginMember={}",loginMember);
+            session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
         }
         return "redirect:/";
     }
@@ -91,8 +95,8 @@ public class LoginController {
         //컨트롤러마다 세션을 체크하는 로직을 짜는것보다 필터, 인터럽트 사용
 
         HttpSession session = request.getSession();
-        NaverMember finMember = (NaverMember) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        model.addAttribute("member", finMember);
+        Member findMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        model.addAttribute("member", findMember);
         return "userInfo";
     }
 
@@ -103,7 +107,7 @@ public class LoginController {
         return "date";
     }
 
-    public String getInfo(NaverMember member) {
+    public String getInfo(OauthMember member) {
         String token = member.getToken();
         String header = "Bearer " + token; // Bearer 다음에 공백 추가
 
@@ -114,7 +118,7 @@ public class LoginController {
         String responseBody = get(apiURL, requestHeaders);
 
 
-        System.out.println(responseBody);
+//        System.out.println(responseBody);
         return responseBody;
     }
 
