@@ -1,6 +1,5 @@
 package naver.naver_api.controller;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import naver.naver_api.domain.Board;
 import naver.naver_api.domain.Member;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -39,22 +37,5 @@ public class BoardController {
         board.setMember(findMember);
 
         return board.toString();
-    }
-
-    @Setter
-    static class BoardInfo{
-        private String title;
-        private String writer;
-        private String content;
-
-        @Override
-        public String toString() {
-            return "BoardInfo" +
-                    "{" +
-                    "title='" + title + '\'' +
-                    ", writer='" + writer + '\'' +
-                    ", content='" + content + '\'' +
-                    '}';
-        }
     }
 }

@@ -2,7 +2,6 @@ package naver.naver_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import naver.naver_api.controller.dto.OauthMember;
-import naver.naver_api.controller.dto.OauthMember;
 import naver.naver_api.domain.Member;
 import naver.naver_api.repository.MemberRepository;
 import naver.naver_api.session.SessionConst;
@@ -35,7 +34,7 @@ public class LoginController {
 
     private final MemberRepository memberRepository;
 
-    public LoginController(MemberRepository memberRepository) {
+    private LoginController(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
@@ -60,6 +59,7 @@ public class LoginController {
     public String setToken(@ModelAttribute OauthMember oauthMember, HttpServletRequest request) throws ParseException {
         log.info("setToken");
 //        log.info("oauthMember={}",oauthMember);
+
         //가져온 토큰으로 한번더 인증
         String info = getInfo(oauthMember);
         JSONParser parser = new JSONParser();
@@ -77,28 +77,6 @@ public class LoginController {
         return "redirect:/";
     }
 
-
-    @GetMapping("/userInfo")
-    public String userInfo(HttpServletRequest request, Model model) {
-//        HttpSession session = request.getSession(false);//true: 세션이 없으면 생성, false: 세션이 없으면 null
-//        if(session == null){
-//            return "index";
-//        }
-//
-//        NaverMember member = (NaverMember)session.getAttribute(SessionConst.LOGIN_MEMBER);
-//
-//        if(member == null){
-//            return "index";
-//        }
-//        model.addAttribute("member",member);
-
-        //컨트롤러마다 세션을 체크하는 로직을 짜는것보다 필터, 인터럽트 사용
-
-        HttpSession session = request.getSession();
-        Member findMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        model.addAttribute("member", findMember);
-        return "userInfo";
-    }
 
 
     @GetMapping("/date")

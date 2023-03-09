@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+//HttpSession의 동작과정을 파악하기 위해 직접 구현해봄
 @Component
 public class SessionManger {
     public static final String SESSION_COOKIE_NANE = "mySessionId";
