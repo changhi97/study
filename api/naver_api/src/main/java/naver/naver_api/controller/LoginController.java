@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import naver.naver_api.controller.dto.OauthMember;
 import naver.naver_api.domain.Member;
 import naver.naver_api.repository.MemberRepository;
+import naver.naver_api.service.MemberService;
 import naver.naver_api.session.SessionConst;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +34,11 @@ import java.util.Map;
 @Slf4j
 public class LoginController {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
-    private LoginController(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    @Autowired
+    private LoginController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @GetMapping("/")
@@ -71,13 +74,18 @@ public class LoginController {
         if (memberCode.equals("00")) {
             HttpSession session = request.getSession();
             Member loginMember = new Member(oauthMember.getUserName(), oauthMember.getEmail());
+
+
             log.info("loginMember={}",loginMember);
             session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+
+            //join 수행 - 추후 따로 뺌 test
+            //ex. 로그인후 가입되어 있지않으면 가입 진행,
+            memberService.save(loginMember);
+
         }
         return "redirect:/";
     }
-
-
 
     @GetMapping("/date")
     public String date(Model model) {

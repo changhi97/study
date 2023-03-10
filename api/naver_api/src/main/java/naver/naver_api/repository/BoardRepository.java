@@ -1,25 +1,24 @@
 package naver.naver_api.repository;
 
-import naver.naver_api.domain.Member;
+import lombok.extern.slf4j.Slf4j;
+import naver.naver_api.domain.Board;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class MemberRepository {
+@Slf4j
+public class BoardRepository {
 
     @PersistenceContext
     private EntityManager em;
 
-    public Long save(Member member){
-        em.persist(member);
-        return member.getId();
+    public Long save(Board board){
+        log.info("board save");
+        em.persist(board);
+        return board.getId();
     }
 
-    public Member findById(Long id){
-        return em.find(Member.class,id);
-    }
 }

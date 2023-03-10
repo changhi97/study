@@ -31,13 +31,19 @@
 <body>
 <h2 style="text-align: center;">글 작성</h2><br><br><br>
 <div style="width: 60%; margin: auto;">
-    <form action="/write" method="post" >
+    <form action="/write" method="post" enctype="multipart/form-data">
         <input type="text" name="writer" style="width: 20%;" placeholder="작성자"/><br>
         <input type="text" name="title" style="width: 40%;" placeholder="제목"/>
         <br><br>
         <textarea id="summernote" name="content"></textarea>
+
+        <ul>
+            <li>첨부파일<input type="file" name="attachFile"></li>
+            <li>이미지 파일들<input type="file" multiple="multiple" name="imageFiles"></li>
+        </ul>
+
         <button type="submit">save</button>
-<!--        <input id="subBtn" type="button" value="글 작성" style="float: right;" onclick="goWrite(this.form)"/>-->
+        <!--        <input id="subBtn" type="button" value="글 작성" style="float: right;" onclick="goWrite(this.form)"/>-->
     </form>
 </div>
 
