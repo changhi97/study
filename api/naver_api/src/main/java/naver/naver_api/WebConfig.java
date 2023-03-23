@@ -22,6 +22,7 @@ public class WebConfig implements WebMvcConfigurer {    //implements WebMvcConfi
 //                .addPathPatterns("/**")
 //                .excludePathPatterns("/css/**", "/*.ico", "/error");
 
+        //check login
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")

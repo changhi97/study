@@ -1,0 +1,32 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+
+    <div>
+        <input type="text" id="nickName" name="nickName" class="form-control"
+               value="1" th:value="${member.userName}" readonly>
+
+        <input type="text" id="email" name="email" class="form-control"
+               value="1" th:value="${member.email}" readonly>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="w-100 btn btn-dark btn-lg" type="submit">
+                로그아웃
+            </button>
+        </form>
+
+    </div>
+
+    <li>Login check
+        <ul>
+            <li><a href="/board/boards">글쓰기</a></li>
+        </ul>
+    </li>
+</ul>
+
+</body>
+</html>

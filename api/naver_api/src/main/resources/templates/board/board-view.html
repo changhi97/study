@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>board</h2></div>
+    <div>
+        <label for="boardId">board ID</label>
+        <input type="text" id="boardId" name="boardId" class="form-control"
+               value="1" th:value="${board.id}" readonly>
+    </div>
+    <div>
+        <label for="createdDate">작성일</label>
+        <input type="text" id="createdDate" name="createdDate" class="form-control"
+               value="-" th:value="${board.createdDate}" readonly></div>
+    <div>
+        <label for="lastModifiedDate">최종 수정일</label>
+        <input type="text" id="lastModifiedDate" name="lastModifiedDate" class="form-control"
+               value="-" th:value="${board.lastModifiedDate}" readonly>
+    </div>
+    <div>
+        <label for="createdBy">작성자</label>
+        <input type="text" id="createdBy" name="createdBy" class="form-control"
+               value="-" th:value="${board.member.userName}" readonly>
+    </div>
+    <div>
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title" class="form-control"
+               value="-" th:value="${board.title}" readonly>
+    </div>
+    <div>
+        <label for="content">내용</label>
+<!--        <textarea>-->
+
+
+        <textarea id="content" name="content" class="form-control"
+               value="-" th:text="${board.content}" readonly>
+        </textarea>
+        첨부파일: <a th:if="${board.attachFile}" th:href="|/board/attach/${board.id}|" th:text="${board.getAttachFile().getUploadFileName()}"/><br/>
+        <img th:each="imageFile : ${board.imageFile}" th:src="|/board/images/${imageFile.getUploadFile().getStoreFileName()}|" width="300" height="300"/>
+    </div>
+
+    <hr class="my-4">
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    th:if="${owner}"
+                    onclick="location.href='editForm.html'"
+                    th:onclick="|location.href='@{/board/{boardId}/edit(boardId=${board.id})}'|" type="button">글 수정
+            </button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='items.html'"
+                    th:onclick="|location.href='@{/board/boards}'|" type="button">목록으로
+            </button>
+        </div>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>

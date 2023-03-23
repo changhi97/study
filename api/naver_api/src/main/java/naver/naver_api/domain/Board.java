@@ -27,6 +27,7 @@ public class Board extends BaseEntity{
 //    private String writer;
 
     //글
+    @Lob
     private String content;
 
     //파일
@@ -67,6 +68,16 @@ public class Board extends BaseEntity{
         this.content = content;
         this.attachFile = attachFile;
         this.imageFile = imageFile;
+    }
+
+    public void updateBoard(String title, String content, UploadFile attachFile, List<UploadFileEntity> imageFile){
+        this.title = title;
+        this.content = content;
+        this.attachFile = attachFile;
+
+        //연관관계에 있는 collection은 clear후 삽입(새로 생성된 컬랙션은 하이버네이트가 관리하지않기 때문)
+        this.imageFile.clear();
+        this.imageFile.addAll(imageFile);
     }
 
     @Override

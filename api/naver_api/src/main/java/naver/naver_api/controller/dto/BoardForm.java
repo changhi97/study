@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class BoardForm {
-    private String id;
     private String title;
     private String content;
     private MultipartFile attachFile;

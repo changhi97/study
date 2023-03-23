@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- include libraries(jQuery, bootstrap) -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+
+    <!-- include summernote css/js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+
+    <!-- include summernote-ko-KR -->
+    <script src="/boardJS/summernote-ko-KR.js"></script>
+    <title>글쓰기</title>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                placeholder: 'content',
+                minHeight: 370,
+                maxHeight: null,
+                focus: true,
+                lang: 'ko-KR'
+            });
+        });
+    </script>
+</head>
+<body>
+<h2 style="text-align: center;">글 작성</h2><br><br><br>
+<div style="width: 60%; margin: auto;">
+    <form action method="post" enctype="multipart/form-data">
+        <input type="text" name="title" style="width: 40%;" th:value="${board.title}" placeholder="제목"/>
+        <br><br>
+        <textarea id="summernote" name="content" th:text="${board.content}"></textarea>
+
+        <ul>
+            <ul>
+                <li>첨부파일<input type="file" name="attachFile">
+                </li>
+                <li>이미지 파일들<input type="file" multiple="multiple" name="imageFiles">
+                </li>
+            </ul>
+
+        </ul>
+
+        <button type="submit">save</button>
+        <!--        <input id="subBtn" type="button" value="글 작성" style="float: right;" onclick="goWrite(this.form)"/>-->
+
+        <button class="w-100 btn btn-secondary btn-lg" onclick="location.href='item.html'"
+                th:onclick="|location.href='@{/board/{boardId}(boardId=${board.id})}'|" type="button">취소</button>
+    </form>
+</div>
+
+</body>
+</html>

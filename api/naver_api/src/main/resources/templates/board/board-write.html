@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -31,8 +31,7 @@
 <body>
 <h2 style="text-align: center;">글 작성</h2><br><br><br>
 <div style="width: 60%; margin: auto;">
-    <form action="/write" method="post" enctype="multipart/form-data">
-        <input type="text" name="writer" style="width: 20%;" placeholder="작성자"/><br>
+    <form action="/board/write" method="post" enctype="multipart/form-data">
         <input type="text" name="title" style="width: 40%;" placeholder="제목"/>
         <br><br>
         <textarea id="summernote" name="content"></textarea>

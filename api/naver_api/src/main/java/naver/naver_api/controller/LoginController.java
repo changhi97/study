@@ -3,7 +3,6 @@ package naver.naver_api.controller;
 import lombok.extern.slf4j.Slf4j;
 import naver.naver_api.controller.dto.OauthMember;
 import naver.naver_api.domain.Member;
-import naver.naver_api.repository.MemberRepository;
 import naver.naver_api.service.MemberService;
 import naver.naver_api.session.SessionConst;
 import org.json.simple.JSONObject;
@@ -41,9 +40,33 @@ public class LoginController {
         this.memberService = memberService;
     }
 
+
     @GetMapping("/")
     public String home(HttpServletRequest request, Model model) {
-        return "index";
+
+        //세션이 있으면 logout 주기
+        HttpSession session = request.getSession(false);
+        if(session==null){
+            return "index";
+        }
+
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginMember==null){
+            return "index";
+        }
+
+        model.addAttribute("member",loginMember);
+        return "loginIndex";
+    }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if(session!=null){
+            session.invalidate();
+        }
+        return "redirect:/";
     }
 
     @RequestMapping("/naver/login")
@@ -58,10 +81,10 @@ public class LoginController {
         return "loginCallback";
     }
 
+    //로그인과 회원가입 분리
     @PostMapping("/naver/callback")
     public String setToken(@ModelAttribute OauthMember oauthMember, HttpServletRequest request) throws ParseException {
         log.info("setToken");
-//        log.info("oauthMember={}",oauthMember);
 
         //가져온 토큰으로 한번더 인증
         String info = getInfo(oauthMember);
@@ -73,24 +96,23 @@ public class LoginController {
         //토큰이 유효하다면 로그인 세션 생성
         if (memberCode.equals("00")) {
             HttpSession session = request.getSession();
+
+            //id가 set되어 있지 않는 엔티티
             Member loginMember = new Member(oauthMember.getUserName(), oauthMember.getEmail());
-
-
-            log.info("loginMember={}",loginMember);
             session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
 
-            //join 수행 - 추후 따로 뺌 test
-            //ex. 로그인후 가입되어 있지않으면 가입 진행,
-            memberService.save(loginMember);
+            //email로 가입여부확인,
+            if(!memberService.DuplicateMemberEmail(loginMember)){
+                return "redirect:/join/oauthMember";
+            }
+
+            //이미 가입된 엔티티반환(id가 set되어 있는 엔티티)
+            loginMember = memberService.findByEmail(oauthMember.getEmail());
+            session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+            log.info("loginMember={}",loginMember);
 
         }
         return "redirect:/";
-    }
-
-    @GetMapping("/date")
-    public String date(Model model) {
-        model.addAttribute("localDateTime", LocalDateTime.now());
-        return "date";
     }
 
     public String getInfo(OauthMember member) {
@@ -102,7 +124,6 @@ public class LoginController {
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", header);
         String responseBody = get(apiURL, requestHeaders);
-
 
 //        System.out.println(responseBody);
         return responseBody;
