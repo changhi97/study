@@ -1,10 +1,12 @@
 package naver.naver_api.domain;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +20,7 @@ public class Member {
 
     private String email;
 
+    @NotEmpty
     private String nickName;
 
 //    @OneToMany(mappedBy = "member")
