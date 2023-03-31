@@ -22,7 +22,7 @@ public class initDB {
 
     @PostConstruct
     public void init() {
-        DBinit();
+        DBinit2();
     }
 
     public void DBinit() {
@@ -59,8 +59,9 @@ public class initDB {
         }
 
         for(int i = 0; i<99; i++){
-            int idx = (int) (Math.random() * 2);
-            boardService.save(new Board(members[idx],"test","testing",null,null));
+            int titleIdx = (int) (Math.random() * 2);
+            int memberIdx = (int) (Math.random() * 3);
+            boardService.save(new Board(members[memberIdx],"test"+titleIdx,"testing",null,null));
         }
     }
 

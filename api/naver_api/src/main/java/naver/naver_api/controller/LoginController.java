@@ -1,7 +1,7 @@
 package naver.naver_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import naver.naver_api.controller.dto.OauthMember;
+import naver.naver_api.dto.OauthMember;
 import naver.naver_api.domain.Member;
 import naver.naver_api.service.MemberService;
 import naver.naver_api.session.SessionConst;
@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,14 +98,16 @@ public class LoginController {
 
             //id가 set되어 있지 않는 엔티티
             Member loginMember = new Member(oauthMember.getUserName(), oauthMember.getEmail());
-            session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+
+            //로그인 전 임시 세션 사용
 
             //email로 가입여부확인,
             if(!memberService.DuplicateMemberEmail(loginMember)){
+                session.setAttribute(SessionConst.TEMPORARY_MEMBER, loginMember);
                 return "redirect:/join/oauthMember";
             }
 
-            //이미 가입된 엔티티반환(id가 set되어 있는 엔티티)
+            //이미 가입된 엔티티반환(id가 set되어 있는 엔티티)    세션은 redis에 저장
             loginMember = memberService.findByEmail(oauthMember.getEmail());
             session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
             log.info("loginMember={}",loginMember);

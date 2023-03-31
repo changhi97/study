@@ -37,7 +37,7 @@ public class MemberValidator implements Validator {
         }
 
         //공백, Whitespace 판별
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nickName", "empty");
+//        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nickName", "empty");
 
         if (member.getNickName().length() < 2 || member.getNickName().length() > 15) {
             errors.rejectValue("nickName", "required", new Object[]{2, 15}, null);

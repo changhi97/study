@@ -1,7 +1,7 @@
 package naver.naver_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import naver.naver_api.controller.dto.BoardForm;
+import naver.naver_api.dto.BoardForm;
 import naver.naver_api.domain.Board;
 import naver.naver_api.domain.Member;
 import naver.naver_api.domain.UploadFile;

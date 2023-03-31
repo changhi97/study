@@ -26,7 +26,7 @@ public class WebConfig implements WebMvcConfigurer {    //implements WebMvcConfi
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**,/*.ico", "/error", "/", "/naver/login", "/naver/callback", "/loginJS/**");
+                .excludePathPatterns("/css/**,/*.ico", "/loginJS/**", "/error", "/", "/naver/login", "/naver/callback", "/join/oauthMember");
     }
     //--interceptor
 

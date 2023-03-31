@@ -1,4 +1,4 @@
-package naver.naver_api.controller.dto;
+package naver.naver_api.dto;
 
 import lombok.Data;
 
