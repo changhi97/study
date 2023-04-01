@@ -34,19 +34,27 @@
     </div>
     <div>
         <label for="content">내용</label>
-<!--        <textarea>-->
+        <!--        <textarea>-->
 
 
         <textarea id="content" name="content" class="form-control"
-               value="-" th:text="${board.content}" readonly>
+                  value="-" th:text="${board.content}" readonly>
         </textarea>
-        첨부파일: <a th:if="${board.attachFile}" th:href="|/board/attach/${board.id}|" th:text="${board.getAttachFile().getUploadFileName()}"/><br/>
-        <img th:each="imageFile : ${board.imageFile}" th:src="|/board/images/${imageFile.getUploadFile().getStoreFileName()}|" width="800" height="450"/>
+        첨부파일: <a th:if="${board.attachFile}" th:href="|/board/attach/${board.id}|"
+                 th:text="${board.getAttachFile().getUploadFileName()}"/><br/>
+        <img th:each="imageFile : ${board.imageFile}"
+             th:src="|/board/images/${imageFile.getUploadFile().getStoreFileName()}|" width="800" height="450"/>
         <p th:text="${board.imageContent}"></p>
     </div>
 
     <hr class="my-4">
     <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    onclick="location.href='editForm.html'"
+                    th:onclick="|location.href='@{/board/{boardId}/edit(boardId=${board.id})}'|" type="button">글 수정
+            </button>
+        </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='items.html'"

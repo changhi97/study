@@ -30,7 +30,6 @@ public class BoardJpaRepository {
                 .getResultList();
     }
 
-
     //paging
     public List<Board> findByPage(int offset, int limit){
         return em.createQuery("select b from Board b",Board.class)

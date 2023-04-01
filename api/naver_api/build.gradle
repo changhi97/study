@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.8'
@@ -25,6 +27,10 @@ dependencies {
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+	implementation platform('com.google.cloud:libraries-bom:26.6.0')
+	implementation 'com.google.cloud:google-cloud-vision'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'

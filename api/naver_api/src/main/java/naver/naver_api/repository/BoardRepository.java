@@ -20,7 +20,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b from Board b where b.title = :title and b.member.userName=:member")
     List<Board> findBoard(@Param("title") String title, @Param("member")String member);
 
-    @Query("select new naver.naver_api.dto.BoardDto(b.id, m.id, m.userName) from Board b join b.member m")
+    @Query("select new naver.naver_api.dto.BoardDto(b.id, b.title, m.userName, b.createdDate) from Board b join b.member m")
     List<BoardDto> findBoardDto();
 
     @Query("select b from Board b where b.member.userName in :names")
@@ -34,6 +34,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             countQuery = "select count(b) from Board b")
     Page<Board> findByMemberUserName(String name, Pageable pageable);
 
-
+    Page<Board> findAll(Pageable pageable);
 
 }

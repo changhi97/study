@@ -1,22 +1,32 @@
 package naver.naver_api.dto;
 
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
 public class BoardDto {
     private Long id;
-    private Long memberId;
-    private String memberName;
 
-    public BoardDto(Long id, Long memberId, String memberName) {
+    private String title;
+    private String userName;
+
+    private LocalDateTime createdDate;
+
+    public BoardDto(Long id, String title, String userName, LocalDateTime createdDate) {
         this.id = id;
-        this.memberId = memberId;
-        this.memberName = memberName;
+        this.title = title;
+        this.userName = userName;
+        this.createdDate = createdDate;
     }
 
     @Override
     public String toString() {
         return "BoardDto{" +
                 "id=" + id +
-                ", memberId=" + memberId +
-                ", memberName='" + memberName + '\'' +
+                ", title='" + title + '\'' +
+                ", userName='" + userName + '\'' +
+                ", createdDate=" + createdDate +
                 '}';
     }
 }

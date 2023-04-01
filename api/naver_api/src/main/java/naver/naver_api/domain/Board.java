@@ -58,6 +58,9 @@ public class Board extends BaseEntity{
     @JoinColumn(name = "BOARD_ID")  //연관관계주인
     private List<UploadFileEntity> imageFile = new ArrayList<>();
 
+    @Lob
+    private String imageContent;
+
     protected Board(){
 
     }

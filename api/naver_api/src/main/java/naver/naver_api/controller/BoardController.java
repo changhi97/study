@@ -1,17 +1,24 @@
 package naver.naver_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import naver.naver_api.dto.BoardDto;
 import naver.naver_api.dto.BoardForm;
 import naver.naver_api.domain.Board;
 import naver.naver_api.domain.Member;
 import naver.naver_api.domain.UploadFile;
 import naver.naver_api.domain.UploadFileEntity;
 import naver.naver_api.file.FileStore;
+import naver.naver_api.goolevision.DetectText;
 import naver.naver_api.service.BoardService;
 import naver.naver_api.session.SessionConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableArgumentResolver;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,6 +36,7 @@ import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/board")
@@ -37,12 +45,15 @@ public class BoardController {
 
     private final FileStore fileStore;
     private final BoardService boardService;
+    private final DetectText detectText;
 
     @Autowired
-    public BoardController(FileStore fileStore, BoardService boardService) {
+    public BoardController(FileStore fileStore, BoardService boardService, DetectText detectText) {
         this.fileStore = fileStore;
         this.boardService = boardService;
+        this.detectText = detectText;
     }
+
 
     @GetMapping("/write")
     public String writeBoard() {
@@ -73,26 +84,44 @@ public class BoardController {
         return "redirect:/board/{boardId}";
     }
 
+
     @GetMapping("/{boardId}")
-    public String showBoard(@PathVariable("boardId") Long id, Model model, HttpServletRequest request) {
+    public String showBoard(@PathVariable("boardId") Long id, Model model, HttpServletRequest request) throws IOException {
         Board findBoard = boardService.findOne(id);
+
+        if (!findBoard.getImageFile().isEmpty()) {
+            String filePath = fileStore.getFullPath(findBoard.getImageFile().get(0).getUploadFile().getStoreFileName());
+            String imageContent = detectText.detectText(filePath).get();
+            findBoard.setImageContent(imageContent);
+        }
         model.addAttribute("board", findBoard);
 
-        //수정 버튼 활성화 유무
-        if(isBoardOwner(findBoard, findSessionMember(request))){
-            model.addAttribute("owner", true);
-        }else{
-            model.addAttribute("owner", false);
+        if (isBoardOwner(findBoard, findSessionMember(request))) {
+            return "board/boardOwner-view";
         }
+
         return "board/board-view";
     }
 
     @GetMapping("/boards")
-    public String boardList(Model model) {
+    public String boardList(Model model, @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         log.info("board/boards");
-        List<Board> findBoards = boardService.findAll();
 
-        model.addAttribute("boards", findBoards);
+        Page<BoardDto> result = boardService.findAll(pageable).map(b -> new BoardDto(b.getId(), b.getTitle(), b.getMember().getUserName(), b.getCreatedDate()));
+        int startPageNumber = 0;
+        int endPageNumber = result.getTotalPages() - 1;
+
+        int nowPageNumber = pageable.getPageNumber();
+        int prevPageNumber = nowPageNumber - 1 < 0 ? 0 : nowPageNumber - 1;
+        int nextPageNumber = nowPageNumber + 1 > endPageNumber ? endPageNumber : nowPageNumber + 1;O
+
+        model.addAttribute("startPageNumber", startPageNumber);
+        model.addAttribute("prevPageNumber", prevPageNumber);
+        model.addAttribute("nowPageNumber", nowPageNumber);
+        model.addAttribute("nextPageNumber", nextPageNumber);
+        model.addAttribute("endPageNumber", endPageNumber);
+        model.addAttribute("boards", result);
+
         return "board/boards";
     }
 
@@ -102,7 +131,7 @@ public class BoardController {
         Board findBoard = boardService.findOne(id);
 
         //작성자만 수정
-        if(!isBoardOwner(findBoard, findSessionMember(request))){
+        if (!isBoardOwner(findBoard, findSessionMember(request))) {
             return "redirect:/board/boards";
         }
 
@@ -115,7 +144,7 @@ public class BoardController {
         Board findBoard = boardService.findOne(id);
 
         //작성자만 수정
-        if(!isBoardOwner(findBoard, findSessionMember(request))){
+        if (!isBoardOwner(findBoard, findSessionMember(request))) {
             return "redirect:/board/boards";
         }
 
@@ -134,7 +163,7 @@ public class BoardController {
     public Resource downloadImage(@PathVariable("fileName") String fileName) throws MalformedURLException {
         log.info("download Image");
         //보안에 취약하다.. 인증로직을 추가해보자
-        return new UrlResource("file:"+fileStore.getFullPath(fileName));
+        return new UrlResource("file:" + fileStore.getFullPath(fileName));
     }
 
     @GetMapping("/attach/{boardId}")
@@ -147,7 +176,7 @@ public class BoardController {
 
         //스프링은 많은 인코딩을 가능하게 하는 UriUtils지원
         String encodedUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8); //한글, 특수문자등 인코딩
-        String contentDisposition = "attachment; filename=\""+encodedUploadFileName+"\"";
+        String contentDisposition = "attachment; filename=\"" + encodedUploadFileName + "\"";
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
@@ -168,9 +197,9 @@ public class BoardController {
     private static boolean isBoardOwner(Board findBoard, Member member) {
         log.info("findBoard.getMember().getId() {}", findBoard.getMember().getId());
         log.info("member.getId() {}", member.getId());
-        log.info("findBoard.getMember().getEmail() {}",findBoard.getMember().getEmail());
-        log.info("member.getEmail() {}",member.getEmail());
-        if(findBoard.getMember().getId() == member.getId() && findBoard.getMember().getEmail().equals(member.getEmail())){
+        log.info("findBoard.getMember().getEmail() {}", findBoard.getMember().getEmail());
+        log.info("member.getEmail() {}", member.getEmail());
+        if (findBoard.getMember().getId() == member.getId() && findBoard.getMember().getEmail().equals(member.getEmail())) {
             return true;
         }
         return false;

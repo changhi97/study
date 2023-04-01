@@ -85,12 +85,14 @@ class BoardRepositoryTest {
 
         Page<Board> result = boardRepository.findByMemberUserName("memberA", pageRequest);
 
+
         for (Board board : result) {
             System.out.println("board.getMember()= "+board.getMember().getUserName());
         }
 
         //entity -> dto
-        Page<BoardDto> map = result.map(b -> new BoardDto(b.getId(), b.getMember().getId(), b.getMember().getUserName()));
+        Page<BoardDto> resultMap = result.map(b -> new BoardDto(b.getId(), b.getTitle(), b.getMember().getUserName(), b.getCreatedDate()));
+        System.out.println("show board");
 
     }
 

@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <link href="../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <link href="../css/pageButton.css" th:href="@{/css/pageButton.css}" rel="stylesheet">
 </head>
 <body>
 <div class="container" style="max-width: 600px">
@@ -33,11 +35,26 @@
                 <td><a href="board.html" th:href="@{/board/{boardId} (boardId=${board.id})}"
                        th:text="${board.id}">board id</a></td>
                 <td><a href="board.html" th:href="@{|/board/${board.id}|}" th:text="${board.title}">제목</a></td>
-                <td th:text="${board.member.userName}">10000</td>
+                <td th:text="${board.userName}">10000</td>
                 <td th:text="${board.createdDate}">10</td>
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="page_wrap">
+        <div class="page_nation">
+            <a class="arrow pprev" th:href="|?page=${startPageNumber}|"></a>
+            <a class="arrow prev" th:href="|?page=${prevPageNumber}|"></a>
+
+            <th:block th:each="num : ${#numbers.sequence(startPageNumber,endPageNumber)}">
+                <a th:text="${num}" th:href="|?page=${num}|"
+                   th:style="${num == nowPageNumber ? 'font-weight: bold;  background-color: pink' : ''}"></a>
+            </th:block>
+
+            <a class="arrow next" th:href="|?page=${nextPageNumber}|"></a>
+            <a class="arrow nnext" th:href="|?page=${endPageNumber}|"></a>
+        </div>
     </div>
 
 </div> <!-- /container -->
