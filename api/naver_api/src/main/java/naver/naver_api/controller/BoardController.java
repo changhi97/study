@@ -23,6 +23,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -56,15 +58,21 @@ public class BoardController {
 
 
     @GetMapping("/write")
-    public String writeBoard() {
+    public String writeBoard(@ModelAttribute BoardForm boardForm) {
         log.info("write Board");
         return "board/board-write";
     }
 
     @PostMapping("/write")
-    public String saveBoard(@ModelAttribute BoardForm boardForm,
+    public String saveBoard(@Validated @ModelAttribute BoardForm boardForm,
+                            BindingResult bindingResult,
                             RedirectAttributes redirectAttributes,
                             HttpServletRequest request) throws IOException {
+
+        if(bindingResult.hasErrors()){
+            log.info("error boardForm {} ", boardForm);
+            return "board/board-write";
+        }
 
         UploadFile uploadFile = fileStore.storeFile(boardForm.getAttachFile());
         List<UploadFile> imageFiles = fileStore.storeFiles(boardForm.getImageFiles());
@@ -113,7 +121,7 @@ public class BoardController {
 
         int nowPageNumber = pageable.getPageNumber();
         int prevPageNumber = nowPageNumber - 1 < 0 ? 0 : nowPageNumber - 1;
-        int nextPageNumber = nowPageNumber + 1 > endPageNumber ? endPageNumber : nowPageNumber + 1;O
+        int nextPageNumber = nowPageNumber + 1 > endPageNumber ? endPageNumber : nowPageNumber + 1;
 
         model.addAttribute("startPageNumber", startPageNumber);
         model.addAttribute("prevPageNumber", prevPageNumber);
@@ -140,8 +148,17 @@ public class BoardController {
     }
 
     @PostMapping("/{boardId}/edit")
-    public String updateBoard(@PathVariable("boardId") Long id, BoardForm boardForm, HttpServletRequest request) throws IOException {
+    public String updateBoard(@PathVariable("boardId") Long id,
+                              @ModelAttribute BoardForm boardForm,
+                              BindingResult bindingResult,
+                              HttpServletRequest request) throws IOException {
+
+        if(bindingResult.hasErrors()){
+            return "board/board-edit";
+        }
+
         Board findBoard = boardService.findOne(id);
+
 
         //작성자만 수정
         if (!isBoardOwner(findBoard, findSessionMember(request))) {

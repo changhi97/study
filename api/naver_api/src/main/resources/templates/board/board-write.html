@@ -27,14 +27,31 @@
             });
         });
     </script>
+    <style>
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 <h2 style="text-align: center;">글 작성</h2><br><br><br>
 <div style="width: 60%; margin: auto;">
-    <form action="/board/write" method="post" enctype="multipart/form-data">
-        <input type="text" name="title" style="width: 40%;" placeholder="제목"/>
+    <form action="/board/write" method="post" th:object="${boardForm}" enctype="multipart/form-data">
+
+        <div>
+            <input type="text" name="title"
+                   th:field="*{title}" class="form-control" th:errorclass="field-error"
+                   style="width: 40%;" placeholder="제목"/>
+            <div class="field-error" th:errors="*{title}"/>
+        </div>
+
         <br><br>
-        <textarea id="summernote" name="content"></textarea>
+
+        <div>
+            <textarea id="summernote" name="content" th:field="*{content}"  class="form-control" th:errorclass="field-error"></textarea>
+            <div class="field-error" th:errors="*{content}"/>
+        </div>
 
         <ul>
             <li>첨부파일<input type="file" name="attachFile"></li>

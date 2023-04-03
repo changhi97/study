@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +22,14 @@ public class Board extends BaseEntity{
     private Member member;
 
     //제목
+    @NotBlank
     private String title;
 
     //작성자(로그인 정보 삽입)
 //    private String writer;
 
     //글
+    @NotBlank
     @Lob
     private String content;
 
