@@ -48,14 +48,46 @@
             <div class="field-error" th:errors="*{content}"/>
         </div>
 
-        <ul>
-            <li>첨부파일<input type="file" name="attachFile"></li>
-            <li>이미지 파일들<input type="file" multiple="multiple" name="imageFiles"></li>
-        </ul>
 
-        <button type="submit">save</button>
+        <div class="form-group file-group" id="file-list">
+            <div class="file-add">
+                <a href="#" onclick="addFile()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    파일추가</a>
+            </div>
+            <a th:each="file:${files}" var="file">
+                <div class="file-input">
+                    <span class="glyphicon glyphicon-camera" th:text="${file.ORG_FILE_NAME}" aria-hidden="true"></span>
+                    <span th:text="${file.FILE_SIZE}">kb</span>
+                    <a href='#' id='file-delete'>삭제</a>
+                </div>
+        </div>
+
     </form>
+
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("a[id='file-delete']").on("click", function (e) {
+            e.preventDefault();
+            deleteFile($(this));
+        });
+    })
+
+    function addFile() {
+        const str = "<div class='file-input'><input type='file' name='file'><a href='#this' id='file-delete'>삭제</a></div>";
+        $("#file-list").append(str);
+        $("a[id='file-delete']").on("click", function (e) {
+            e.preventDefault();
+            deleteFile($(this));
+        });
+    }
+
+    function deleteFile(obj) {
+        obj.parent().remove();
+    }
+</script>
+
 
 </body>
 </html>

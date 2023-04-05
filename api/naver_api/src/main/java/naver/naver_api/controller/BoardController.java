@@ -1,12 +1,12 @@
 package naver.naver_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import naver.naver_api.dto.BoardDto;
-import naver.naver_api.dto.BoardForm;
 import naver.naver_api.domain.Board;
 import naver.naver_api.domain.Member;
 import naver.naver_api.domain.UploadFile;
 import naver.naver_api.domain.UploadFileEntity;
+import naver.naver_api.dto.BoardDto;
+import naver.naver_api.dto.BoardForm;
 import naver.naver_api.file.FileStore;
 import naver.naver_api.goolevision.DetectText;
 import naver.naver_api.service.BoardService;
@@ -17,7 +17,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,6 @@ import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/board")
@@ -97,11 +95,13 @@ public class BoardController {
     public String showBoard(@PathVariable("boardId") Long id, Model model, HttpServletRequest request) throws IOException {
         Board findBoard = boardService.findOne(id);
 
-        if (!findBoard.getImageFile().isEmpty()) {
-            String filePath = fileStore.getFullPath(findBoard.getImageFile().get(0).getUploadFile().getStoreFileName());
-            String imageContent = detectText.detectText(filePath).get();
-            findBoard.setImageContent(imageContent);
-        }
+//        if (!findBoard.getImageFile().isEmpty()) {
+//            String filePath = fileStore.getFullPath(findBoard.getImageFile().get(0).getUploadFile().getStoreFileName());
+//            String imageContent = detectText.detectText(filePath).get();
+//            findBoard.setImageContent(imageContent);
+//        }
+
+
         model.addAttribute("board", findBoard);
 
         if (isBoardOwner(findBoard, findSessionMember(request))) {
@@ -134,16 +134,19 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}/edit")
-    public String editBoard(@PathVariable("boardId") Long id, Model model, HttpServletRequest request) {
+    public String editBoard(@PathVariable("boardId") Long id,
+                            Model model,
+                            HttpServletRequest request) {
         //에초에 권한이 없으면 수정버튼을 없애서 호출 금지
         Board findBoard = boardService.findOne(id);
+        BoardForm boardForm = new BoardForm(findBoard.getTitle(), findBoard.getContent());
 
         //작성자만 수정
         if (!isBoardOwner(findBoard, findSessionMember(request))) {
             return "redirect:/board/boards";
         }
 
-        model.addAttribute("board", findBoard);
+        model.addAttribute("boardForm", boardForm);
         return "board/board-edit";
     }
 

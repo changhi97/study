@@ -18,11 +18,19 @@ public class BoardForm {
     private MultipartFile attachFile;
     private List<MultipartFile> imageFiles;
 
+    public BoardForm(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    
     @Override
     public String toString() {
         return "BoardForm{" +
                 "title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", attachFile=" + attachFile.getOriginalFilename() +
+                ", imageFiles=" + imageFiles.get(0).getOriginalFilename() +
                 '}';
     }
 }

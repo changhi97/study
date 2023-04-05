@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 import java.util.Objects;
 
 /**
@@ -36,6 +37,9 @@ import java.util.Objects;
 public class UploadFile {
     private String uploadFileName;
     private String storeFileName;
+
+    @Lob
+    private String fileText;
 
     public UploadFile(String uploadFileName, String storeFileName) {
         this.uploadFileName = uploadFileName;
