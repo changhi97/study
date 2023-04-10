@@ -34,12 +34,11 @@
     </div>
     <div>
         <label for="content">내용</label>
-        <!--        <textarea>-->
 
+        <span id="content" name="content" class="form-control"
+              th:utext="${board.content}" readonly>
+        </span>
 
-        <textarea id="content" name="content" class="form-control"
-                  value="-" th:text="${board.content}" readonly>
-        </textarea>
         첨부파일: <a th:if="${board.attachFile}" th:href="|/board/attach/${board.id}|"
                  th:text="${board.getAttachFile().getUploadFileName()}"/><br/>
         <img th:each="imageFile : ${board.imageFile}"

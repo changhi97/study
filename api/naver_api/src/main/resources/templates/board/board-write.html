@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
     <!-- include libraries(jQuery, bootstrap) -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
@@ -11,6 +10,9 @@
     <!-- include summernote css/js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+
+    <link href="../css/pageButton.css" th:href="@{/css/pageButton.css}" rel="stylesheet">
+    <link href="../css/fileUpload.css" th:href="@{/css/fileUpload.css}" rel="stylesheet">
 
     <!-- include summernote-ko-KR -->
     <script src="/boardJS/summernote-ko-KR.js"></script>
@@ -27,6 +29,7 @@
             });
         });
     </script>
+
     <style>
         .field-error {
             border-color: #dc3545;
@@ -37,10 +40,10 @@
 <body>
 <h2 style="text-align: center;">글 작성</h2><br><br><br>
 <div style="width: 60%; margin: auto;">
-    <form action="/board/write" method="post" th:object="${boardForm}" enctype="multipart/form-data">
 
+    <form id="boardForm" th:object="${boardForm}">
         <div>
-            <input type="text" name="title"
+            <input type="text" id="title" name="title"
                    th:field="*{title}" class="form-control" th:errorclass="field-error"
                    style="width: 40%;" placeholder="제목"/>
             <div class="field-error" th:errors="*{title}"/>
@@ -49,20 +52,63 @@
         <br><br>
 
         <div>
-            <textarea id="summernote" name="content" th:field="*{content}"  class="form-control" th:errorclass="field-error"></textarea>
+            <textarea id="summernote" name="content" th:field="*{content}" class="form-control"
+                      th:errorclass="field-error"></textarea>
             <div class="field-error" th:errors="*{content}"/>
         </div>
 
-        <ul>
-            <li>첨부파일<input type="file" name="attachFile"></li>
-            <li>이미지 파일들<input type="file" multiple="multiple" name="imageFiles"></li>
-        </ul>
+        <br>
+        <div class="file-upload">
+            <label for="file-upload" class="file-upload-label">Choose attach file</label>
+            <input id="file-upload" type="file" name="file">
+            <div id="file-name" class="attach-file-name"></div>
+        </div>
 
+        <br>
 
+        <div class="file-upload">
+            <label for="files-upload" class="file-upload-label">Choose image files</label>
+            <input id="files-upload" type="file" name="file" multiple>
+            <div id="file-names" class="image-file-names"></div>
+
+        </div>
+
+        <!--        <ul>-->
+        <!--            <li>첨부파일<input type="file" id="attachFile" name="attachFile"></li>-->
+        <!--            <li>이미지 파일들<input type="file" multiple="multiple" id= "imageFiles" name="imageFiles"></li>-->
+        <!--        </ul>-->
+
+        <br>
         <button type="submit">save</button>
         <!--        <input id="subBtn" type="button" value="글 작성" style="float: right;" onclick="goWrite(this.form)"/>-->
     </form>
 </div>
+<script>
+    document.querySelector('#file-upload').addEventListener('change', function () {
+        addAttachFileNames();
+    });
 
+    function addAttachFileNames() {
+        var fileNames = document.querySelector('#file-upload').files;
+        var fileNamesDiv = document.querySelector('.file-names');
+        fileNamesDiv.innerHTML = "";
+        for (var i = 0; i < fileNames.length; i++) {
+            var fileName = fileNames[i].name;
+            var fileId = "file-" + i;
+            var fileDiv = document.createElement("div");
+            fileDiv.classList.add("file-div");
+
+            var nameSpan = document.createElement("span");
+            nameSpan.innerText = fileName;
+            fileDiv.appendChild(nameSpan);
+
+            fileDiv.setAttribute("id", fileId);
+            fileNamesDiv.appendChild(fileDiv);
+
+        }
+        // input 엘리먼트 초기화(input은 동일한 문서를 두번 허용하지 않기 때문에 비워줌)
+        document.querySelector('#file-upload').value = "";
+    }
+</script>
 </body>
 </html>

@@ -22,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +31,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -65,10 +71,9 @@ public class BoardController {
     public String saveBoard(@Validated @ModelAttribute BoardForm boardForm,
                             BindingResult bindingResult,
                             RedirectAttributes redirectAttributes,
-                            HttpServletRequest request) throws IOException {
+                            HttpServletRequest request) throws IOException, ServletException {
 
         if(bindingResult.hasErrors()){
-            log.info("error boardForm {} ", boardForm);
             return "board/board-write";
         }
 
@@ -105,7 +110,7 @@ public class BoardController {
         model.addAttribute("board", findBoard);
 
         if (isBoardOwner(findBoard, findSessionMember(request))) {
-            return "board/boardOwner-view";
+            return "board/board-owner-view";
         }
 
         return "board/board-view";

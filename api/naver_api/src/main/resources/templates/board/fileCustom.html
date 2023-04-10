@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <title>File Upload Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+
+        #file-upload {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+            transition: background-color 0.3s;
+        }
+
+        .file-upload-label:hover {
+            background-color: #eaeaea;
+        }
+
+        .file-names {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column; /* 요소를 수직 방향으로 배치 */
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .file-div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+            color: #333;
+            padding: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-div:hover {
+            background-color: #ccc;
+        }
+
+        .file-div span {
+            flex-grow: 1;
+        }
+
+        .delete-btn {
+            background-color: #3f51b5;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete-btn:hover {
+            background-color: #1e2d6c;
+        }
+
+        button[type="button"] {
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #3f51b5;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="button"]:hover {
+            background-color: #1e2d6c;
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+</head>
+<body>
+<h1>File Upload Example</h1>
+<div class="container">
+    <form id="myForm">
+        <div class="file-upload">
+            <label for="file-upload" class="file-upload-label">Choose files to upload</label>
+            <input id="file-upload" type="file" name="file" multiple>
+        </div>
+        <div class="file-names"></div>
+        <button type="button" onclick="uploadFile()">Upload</button>
+    </form>
+</div>
+
+
+<script>
+    //수정시, binding result시 동일하게
+
+    //작성시 파일을 선택하면 파일들을 보여준다
+    //수정시 파일의 목록들을 보여주고 삭제가 가능하다
+    //binding result시 기존 데이터는 그대로(파일을 그대로 넘긴다. 타임리크로 넘어오는걸 받아오자)
+    var selectedFiles = [];
+    //파일이 대용량일 경우 비동기로 보내야한다.
+    function uploadFile() {
+        var formData = new FormData($("#myForm")[0]);
+
+        for (var i = 0; i < selectedFiles.length; i++) {
+            formData.append('myFiles', selectedFiles[i]);
+        }
+
+        console.log(formData);
+        $.ajax({
+            url: "/uploadTest",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    document.querySelector('#file-upload').addEventListener('change', function () {
+        addFileNames();
+    });
+
+    function addFileNames() {
+        selectedFiles =[];
+        var fileNames = document.querySelector('#file-upload').files;
+        var fileNamesDiv = document.querySelector('.file-names');
+        fileNamesDiv.innerHTML = "";
+        for (var i = 0; i < fileNames.length; i++) {
+            var fileName = fileNames[i].name;
+            var fileId = "file-" + i;
+            var fileDiv = document.createElement("div");
+            fileDiv.classList.add("file-div");
+
+            var nameSpan = document.createElement("span");
+            nameSpan.innerText = fileName;
+            fileDiv.appendChild(nameSpan);
+
+            var deleteBtn = document.createElement("button");
+            deleteBtn.classList.add("delete-btn");
+            deleteBtn.innerText = "Delete";
+            deleteBtn.setAttribute("data-file-id", fileId);
+            deleteBtn.addEventListener("click", deleteFile);
+            fileDiv.appendChild(deleteBtn);
+
+            fileDiv.setAttribute("id", fileId);
+            fileNamesDiv.appendChild(fileDiv);
+
+            // selectedFiles 배열에 추가
+            selectedFiles.push(fileNames[i]);
+        }
+        // input 엘리먼트 초기화(input은 동일한 문서를 두번 허용하지 않기 때문에 비워줌)
+        // document.querySelector('#file-upload').value = "";
+    }
+
+    function deleteFile() {
+        var fileId = this.getAttribute("data-file-id");
+        var fileDiv = document.getElementById(fileId);
+
+        // selectedFiles 배열에서 삭제
+        selectedFiles = selectedFiles.filter(function (file) {
+            console.log(file.name, document.getElementById(fileId).querySelector('span').textContent);
+            return file.name !== document.getElementById(fileId).querySelector('span').textContent;
+        });
+
+        fileDiv.parentNode.removeChild(fileDiv);
+        printSelectedFiles();
+    }
+
+    function printSelectedFiles() {
+        console.log(selectedFiles);
+    }
+
+</script>
+</body>
+</html>

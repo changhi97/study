@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 
-@Configuration
+//@Configuration
 public class WebConfig implements WebMvcConfigurer {    //implements WebMvcConfigurer - interceptor
 
     //interceptor   -   필터와 다르게 url처리가 간단(** : all , *.png : 특정 파일)

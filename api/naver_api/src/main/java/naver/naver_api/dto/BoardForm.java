@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -16,6 +18,7 @@ public class BoardForm {
     private String content;
 
     private MultipartFile attachFile;
+
     private List<MultipartFile> imageFiles;
 
     public BoardForm(String title, String content) {
@@ -23,7 +26,10 @@ public class BoardForm {
         this.content = content;
     }
 
-    
+
+    public BoardForm() {
+    }
+
     @Override
     public String toString() {
         return "BoardForm{" +

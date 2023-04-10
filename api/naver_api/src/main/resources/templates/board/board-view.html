@@ -37,9 +37,9 @@
 <!--        <textarea>-->
 
 
-        <textarea id="content" name="content" class="form-control"
-               value="-" th:text="${board.content}" readonly>
-        </textarea>
+        <span id="content" name="content" class="form-control"
+        th:utext="${board.content}" readonly>
+        </span>
 
         첨부파일: <a th:if="${board.attachFile}" th:href="|/board/attach/${board.id}|" th:text="${board.getAttachFile().getUploadFileName()}"/><br/>
         <img th:each="imageFile : ${board.imageFile}" th:src="|/board/images/${imageFile.getUploadFile().getStoreFileName()}|" width="800" height="450"/>

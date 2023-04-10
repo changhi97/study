@@ -1,0 +1,83 @@
+#file-upload {
+  display: none;
+}
+#files-upload {
+  display: none;
+}
+
+.file-upload-label {
+  display: block;
+  padding: 10px;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  color: #555;
+  transition: background-color 0.3s;
+}
+
+.file-upload-label:hover {
+  background-color: #eaeaea;
+}
+
+.upload-file-name {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column; /* 요소를 수직 방향으로 배치 */
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.file-div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ddd;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #333;
+  padding: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.file-div:hover {
+  background-color: #ccc;
+}
+
+.file-div span {
+  flex-grow: 1;
+}
+
+.delete-btn {
+  background-color: #3f51b5;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #1e2d6c;
+}
+
+/*button[type="button"] {*/
+/*  display: block;*/
+/*  margin-top: 10px;*/
+/*  padding: 10px;*/
+/*  background-color: #3f51b5;*/
+/*  border: none;*/
+/*  color: #fff;*/
+/*  font-size: 16px;*/
+/*  cursor: pointer;*/
+/*  transition: background-color 0.3s;*/
+/*}*/
+/**/
+/*button[type="button"]:hover {*/
+/*  background-color: #1e2d6c;*/
+/*}*/
