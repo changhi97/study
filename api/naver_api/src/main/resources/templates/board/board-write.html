@@ -41,7 +41,7 @@
 <h2 style="text-align: center;">글 작성</h2><br><br><br>
 <div style="width: 60%; margin: auto;">
 
-    <form id="boardForm" th:object="${boardForm}">
+    <form id="boardForm" method="post" th:object="${boardForm}" enctype="multipart/form-data">
         <div>
             <input type="text" id="title" name="title"
                    th:field="*{title}" class="form-control" th:errorclass="field-error"
@@ -57,29 +57,27 @@
             <div class="field-error" th:errors="*{content}"/>
         </div>
 
-        <br>
-        <div class="file-upload">
-            <label for="file-upload" class="file-upload-label">Choose attach file</label>
-            <input id="file-upload" type="file" name="file">
-            <div id="file-name" class="attach-file-name"></div>
-        </div>
+        <ul>
+            <!--        <div class="file-upload">-->
+            <!--            <label for="file-upload" class="file-upload-label">Choose attach file</label>-->
+            <li>하나만<input type="file" id="attachFile" name="attachFile"></li>
+            <!--            <div id="file-name" class="attach-file-name"></div>-->
+            <!--        </div>-->
+
+
+            <!--        <div class="file-upload">-->
+            <!--            <label for="files-upload" class="file-upload-label">Choose image files</label>-->
+            <li>여러개<input type="file" id="imageFiles®" name="imageFiles" multiple="multiple"></li>
+            <!--            <div id="file-names" class="image-file-names"></div>-->
+            <!--        </div>-->
+        </ul>
+<!--                <ul>`-->
+<!--                    <li>첨부파일<input type="file" id="attachFile" name="attachFile"></li>-->
+<!--                    <li>이미지 파일들<input type="file" multiple="multiple" id="imageFiles" name="imageFiles"></li>-->
+<!--                </ul>-->
 
         <br>
-
-        <div class="file-upload">
-            <label for="files-upload" class="file-upload-label">Choose image files</label>
-            <input id="files-upload" type="file" name="file" multiple>
-            <div id="file-names" class="image-file-names"></div>
-
-        </div>
-
-        <!--        <ul>-->
-        <!--            <li>첨부파일<input type="file" id="attachFile" name="attachFile"></li>-->
-        <!--            <li>이미지 파일들<input type="file" multiple="multiple" id= "imageFiles" name="imageFiles"></li>-->
-        <!--        </ul>-->
-
-        <br>
-        <button type="submit">save</button>
+        <button type="submit">저장하기</button>
         <!--        <input id="subBtn" type="button" value="글 작성" style="float: right;" onclick="goWrite(this.form)"/>-->
     </form>
 </div>

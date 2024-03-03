@@ -8,14 +8,12 @@ import naver.naver_api.validation.MemberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 @Controller
 @Slf4j
@@ -38,6 +36,9 @@ public class joinController {
      *
      * [글로벌 설정]
      * main문에 선언
+     *
+     * @InitBinder?
+     * -> 속한 Controller의 모든 요청 전에 InitBinder를 선언한 메서드가 실행된다.
      */
     @InitBinder
     public void init(WebDataBinder webDataBinder){
@@ -69,8 +70,6 @@ public class joinController {
         return "members/addOauthMemberForm";
     }
 
-
-
     @PostMapping("/oauthMember")
     public String saveOauthMemberV3(@Validated @ModelAttribute Member member, BindingResult bindingResult, HttpServletRequest request){
         //단순한 검증은 Bean Validation을 사용하자(@NotBlank, @NotNull....) -> 애로테이션 하나로 검증로직을 매우 편리하게 사용가능
@@ -83,6 +82,7 @@ public class joinController {
         if(!temporaryMemberInSession(session)){
             return "redirect:/";
         }
+
         Member findMember = (Member)session.getAttribute(SessionConst.TEMPORARY_MEMBER);
         Member joinMember = new Member(findMember.getUserName(),findMember.getEmail(),member.getNickName());
 
@@ -102,7 +102,6 @@ public class joinController {
         }
         return true;
     }
-
 
     /*@PostMapping("/oauthMember")
     public String saveOauthMemberV2(@ModelAttribute Member member, BindingResult bindingResult, HttpServletRequest request){
@@ -168,3 +167,11 @@ public class joinController {
         return "redirect:/";
     }*/
 }
+/**
+ * 재미있는거! 나도 하고싶은거!!!!
+ * 화상채팅은 아주 조그마한 기능으로 넣자
+ * 데스크탑으로 많이 하는게 뭐가 있을까
+ * 게임 인강듣기
+ *
+ * 글자수체크 그런거는 데스크탑으로 많이 하지않을까싶다 -> 이런 특화된 기능이 뭐가있을까
+ */

@@ -64,6 +64,8 @@ public class Board extends BaseEntity{
     @Lob
     private String imageContent;
 
+    //jpa가 클래스와 태이블을 매핑하기위해서 Reflectiuon apif를 사용하는데 클래스에 접근하기 위해서 생성자를 통한다.
+    //또한 프록시로 접근하는데 프록시는 실제객체를 상속받는것이다. private은 상속을 받지 않기 떄문에 public이나 protected로 해야한다.
     protected Board(){
 
     }

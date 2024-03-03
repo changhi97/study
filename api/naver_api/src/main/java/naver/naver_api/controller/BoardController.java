@@ -22,8 +22,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +32,11 @@ import org.springframework.web.util.UriUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -60,10 +55,9 @@ public class BoardController {
         this.detectText = detectText;
     }
 
-
     @GetMapping("/write")
     public String writeBoard(@ModelAttribute BoardForm boardForm) {
-        log.info("write Board");
+        log.info("get write Board");
         return "board/board-write";
     }
 
@@ -73,13 +67,18 @@ public class BoardController {
                             RedirectAttributes redirectAttributes,
                             HttpServletRequest request) throws IOException, ServletException {
 
+        log.info("post write Board");
+        log.info("boardForm {}",boardForm);
+
         if(bindingResult.hasErrors()){
+            log.info("boardForm ERROR");
             return "board/board-write";
         }
 
         UploadFile uploadFile = fileStore.storeFile(boardForm.getAttachFile());
         List<UploadFile> imageFiles = fileStore.storeFiles(boardForm.getImageFiles());
 
+        log.info("success uploadFile");
         //save Board 멤
         Member findMember = findSessionMember(request);
 

@@ -20,7 +20,7 @@ public class initDB {
         this.memberService = memberService;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         DBinit2();
     }

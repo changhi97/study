@@ -3,7 +3,6 @@ package naver.naver_api.service;
 import lombok.extern.slf4j.Slf4j;
 import naver.naver_api.domain.Member;
 import naver.naver_api.repository.MemberRepository;
-import org.hibernate.boot.model.source.spi.EmbeddedAttributeMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional  //트랜잭션을 명시적으로 관리하고 제어하기위해 선언
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
