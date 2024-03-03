@@ -27,4 +27,12 @@ public class ItemMongoService {
     public List<Item> findByPriceGreaterThanEqual(int price){
         return itemMongoRepository.findByPriceGreaterThanEqual(price);
     }
+
+    public List<Item> findExpensiveDefence(int price){
+        return itemMongoRepository.findExpensiveDefence(price);
+    }
+
+    public List<Item> findDefenceOther(int price){
+        return itemMongoRepository.findDefenceOther(price);
+    }
 }

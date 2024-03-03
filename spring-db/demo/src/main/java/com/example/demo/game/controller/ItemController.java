@@ -33,4 +33,14 @@ public class ItemController {
     public List<Item> findByPriceGreaterThanEqual(@PathVariable("price") int price){
         return itemMongoService.findByPriceGreaterThanEqual(price);
     }
+
+    @GetMapping("/query1/{price}")
+    public List<Item> findExpensiveDefence(@PathVariable("price") int price){
+        return itemMongoService.findExpensiveDefence(price);
+    }
+
+    @GetMapping("/query2/{price}")
+    public List<Item> findDefenceOrAll(@PathVariable("price") int price){
+        return itemMongoService.findDefenceOther(price);
+    }
 }
