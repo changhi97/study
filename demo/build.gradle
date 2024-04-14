@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-webflux' // WebFlux 의존성 추가
+	// MySQL에서 공식적으로 지원하는 R2DBC Driver 구현체는 없다
+	// 비공식적으로 제공되는게 2개(jasync-sql, r2dbc-mysql)있는데, jasync-sql 을 사용하는 것이 나아보인다.
+	// r2dbc-mysql은 관리도 되지 않고, 메인테이너도 포기한 것 같다.
+	// 그러므로 이번 글에서는 r2dbc mysql driver 구현체로 jasync-sql 을 사용
+	// ConnectionFactory - io.r2dbc.spi package
+	// 말 그래도 데이터베이스 드라이버와 Connection을 생성하는 인터페이스이다.
+	// 드라이버 구현체에서 이를 구현해서 사용하게 된다.
+	// Jasync-sql을 사용하면 JasyncConnectionFactory 클래스가 구현체로 사용된다.
+//	implementation 'io.r2dbc:r2dbc-spi' // R2DBC SPI 의존성 추가
+//	implementation 'io.r2dbc:r2dbc-mysql' // R2DBC MySQL 의존성 추가
+
+	implementation "com.github.jasync-sql:jasync-r2dbc-mysql:2.0.8"
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc' // R2DBC Spring Data 지원 추가
+	implementation 'org.springframework.boot:spring-boot-starter-validation' // 유효성 검사를 위한 스타터 추가
+	implementation 'org.springframework.boot:spring-boot-starter-actuator' // 액추에이터 스타터 추가 (옵션)
+
+	implementation 'org.springframework.boot:spring-boot-starter-test' // 테스트 의존성 추가
+	testImplementation 'io.projectreactor:reactor-test' // Reactor 테스트 의존성 추가
+	testImplementation 'io.r2dbc:r2dbc-pool' // R2DBC Pool 테스트 의존성 추가
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

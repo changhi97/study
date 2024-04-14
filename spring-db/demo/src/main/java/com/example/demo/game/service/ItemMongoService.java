@@ -4,11 +4,13 @@ import com.example.demo.game.domain.Item;
 import com.example.demo.game.repository.ItemMongoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ItemMongoService {
     private final ItemMongoRepository itemMongoRepository;
 
@@ -24,15 +26,15 @@ public class ItemMongoService {
         return itemMongoRepository.findAll();
     }
 
-    public List<Item> findByPriceGreaterThanEqual(int price){
+        public List<Item> findByPriceGreaterThanEqual(int price){
         return itemMongoRepository.findByPriceGreaterThanEqual(price);
     }
 
-    public List<Item> findExpensiveDefence(int price){
-        return itemMongoRepository.findExpensiveDefence(price);
+    public List<Item> findByNameAndPrice(int price){
+        return itemMongoRepository.findByNameAndPrice(price);
     }
 
-    public List<Item> findDefenceOther(int price){
-        return itemMongoRepository.findDefenceOther(price);
+    public List<Item> findByNameOrPrice(int price){
+        return itemMongoRepository.findByNameOrPrice(price);
     }
 }

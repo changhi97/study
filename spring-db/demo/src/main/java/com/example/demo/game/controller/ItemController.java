@@ -35,12 +35,12 @@ public class ItemController {
     }
 
     @GetMapping("/query1/{price}")
-    public List<Item> findExpensiveDefence(@PathVariable("price") int price){
-        return itemMongoService.findExpensiveDefence(price);
+    public List<Item> findByNameAndPrice(@PathVariable("price") int price){
+        return itemMongoService.findByNameAndPrice(price);
     }
 
     @GetMapping("/query2/{price}")
-    public List<Item> findDefenceOrAll(@PathVariable("price") int price){
-        return itemMongoService.findDefenceOther(price);
+    public List<Item> findByNameOrPrice(@PathVariable("price") int price){
+        return itemMongoService.findByNameOrPrice(price);
     }
 }

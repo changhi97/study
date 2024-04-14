@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
-
 import java.util.List;
 
 public interface ItemMongoRepository extends MongoRepository<Item, String> {
@@ -14,12 +13,9 @@ public interface ItemMongoRepository extends MongoRepository<Item, String> {
 
     List<Item> findByPriceGreaterThanEqual(int price);
 
-    //db.Item.find( { "name": "defence", "price": { $gte: 1000 } } )
-    @Query("{'name' : 'defence', 'price':{$gte : :price}}")
-    List<Item> findExpensiveDefence(@Param("price") int price);
+    @Query("{'name' : 'defence', 'price':{$gte : :?0}}")
+    List<Item> findByNameAndPrice(int price);
 
-    //db.Item.find({ $or : [ {"name" : "defence"}, {"price" : {$gte : 1500}} ]})
-    @Query("{'$or': [{'name': 'defence'}, {'price': {$gte: :price}}]}")
-    List<Item> findDefenceOther(@Param("price") int price);
-
+    @Query("{'$or': [{'name': 'defence'}, {'price': {$gte: :?0}}]}")
+    List<Item> findByNameOrPrice(int price);
 }
